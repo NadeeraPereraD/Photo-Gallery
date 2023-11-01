@@ -13,8 +13,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      title: 'photo gallery',
-      home: InitialPage(),
+      debugShowCheckedModeBanner: false, /// Remove Debug banner
+      title: 'photo gallery', /// App Name
+      home: InitialPage(), /// Initial Page
     );
   }
 }
@@ -37,7 +38,7 @@ class _InitialPageState extends State<InitialPage> {
   startTimer() async {
     var duration = const Duration(seconds: 3);
     return Timer(duration, () {
-      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (_) {
         return const HomePage();
       }));
     });
