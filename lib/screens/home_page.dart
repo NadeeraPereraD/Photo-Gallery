@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:photo_gallery/app_logic/image_manager.dart';
+import 'package:photo_gallery/main.dart';
+import 'package:photo_gallery/screens/photo_view_page.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -10,18 +15,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<ImagesList> imagesList = [];
+  List<ImagesObject> imagesList = [];
+  ImageManager? m_manager = null;
 
 /////// Images Load function
   void loadImages() {
-    var manager = ImageManager.getInstance();
+    if (m_manager == null) {
+      m_manager = ImageManager.getInstance();
+    }
     imagesList.clear();
+    print('Loading Images');
 
-    if (manager.imageGridList.isNotEmpty) {
-      for (int i = 0; i < manager.imageGridList.length; i++) {
-        imagesList.add(ImagesList(
-            imageId: manager.imageGridList[i].id,
-            imagePath: manager.imageGridList[i].imagePath));
+    if (m_manager!.imageGridList.isNotEmpty) {
+      for (int i = 0; i < m_manager!.imageGridList.length; i++) {
+        imagesList.add(ImagesObject(
+            imageId: m_manager!.imageGridList[i].id,
+            imagePath: m_manager!.imageGridList[i].imagePath));
       }
     }
   }
@@ -29,12 +38,30 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
+    () async {
+      var _permissionStatus = await Permission.storage.status;
+ 
+      if (_permissionStatus != PermissionStatus.granted) {
+        PermissionStatus permissionStatus= await Permission.storage.request();
+        setState(() {
+          _permissionStatus = permissionStatus;
+        });
+      }
+    } ();
     loadImages();
   }
 
   Future addImages() async {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) return;
+
+    print(MyApp.Tag + image.path);
+    
+
+    m_manager!.addImages(image.path);
+    setState(() {
+      loadImages();
+    });
   }
 
   @override
@@ -47,31 +74,56 @@ class _HomePageState extends State<HomePage> {
           IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
         ],
       ),
-      body: GridView.count(
-        
-        crossAxisCount: 3,
-        children: imagesList.map((images) {
-          return Card(
-            child: Image(
-              image: AssetImage(images.imagePath),
-              fit: BoxFit.cover,
-            ),
-          );
-        }).toList(),
-        // Image(
-        //   image: AssetImage('assets/image1.png'),
-        //   width: 250,
-        // ),
-      ),
+      // body: GridView.count(
+      //   crossAxisCount: 4,
+      //   children: imagesList.map((images) {
+      //     return Card(
+      //       child: Image(
+      //         image: AssetImage(images.imagePath),
+      //         fit: BoxFit.cover,
+      //       ),
+      //     );
+      //   }).toList(),
+      // ),
+      body: GridView.builder(
+          itemCount: imagesList.length,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3),
+          itemBuilder: ((context, index) {
+            return InkWell(
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => PhotoViewPage(imagesList[index].imagePath),
+                ),
+              ),
+              child: Hero(
+                tag: imagesList[index],
+                child: Card(
+                  child: Image.file(
+                      File(imagesList[index].imagePath),
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.fill,
+                  )
+                  // Image(
+                  //     image: AssetImage(
+                  //   imagesList[index].imagePath,
+                  // )),
+                ),
+                //),
+              ),
+            );
+          })),
     );
   }
 }
 
-class ImagesList {
+class ImagesObject {
   late int imageId;
   late String imagePath;
 
-  ImagesList({
+  ImagesObject({
     required this.imageId,
     required this.imagePath,
   });

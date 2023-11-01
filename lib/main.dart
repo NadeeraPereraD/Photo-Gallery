@@ -8,14 +8,21 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  static const String Tag = 'photoGallery : ';
   const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      debugShowCheckedModeBanner: false, /// Remove Debug banner
-      title: 'photo gallery', /// App Name
-      home: InitialPage(), /// Initial Page
+      debugShowCheckedModeBanner: false,
+
+      /// Remove Debug banner
+      title: 'photo gallery',
+
+      /// App Name
+      home: InitialPage(),
+
+      /// Initial Page
     );
   }
 }
@@ -31,10 +38,12 @@ class _InitialPageState extends State<InitialPage> {
   @override
   void initState() {
     super.initState();
-    startTimer(); /// Put timer delay for route to Home Page
+    startTimer();
+
+    /// Put timer delay for route to Home Page
   }
 
-/// Start Timer Delay
+  /// Start Timer Delay
   startTimer() async {
     var duration = const Duration(seconds: 3);
     return Timer(duration, () {

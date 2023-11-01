@@ -6,12 +6,12 @@ class ImageManager {
   static final ImageManager _imageManager = ImageManager._privateConstructor();
 
   ImageManager._privateConstructor() {
-    imageGridList.add(ImageGrids('assets/image1.png'));
-    imageGridList.add(ImageGrids('assets/image2.png'));
-    imageGridList.add(ImageGrids('assets/image3.png'));
-    imageGridList.add(ImageGrids('assets/image4.png'));
-    imageGridList.add(ImageGrids('assets/image5.png'));
-    imageGridList.add(ImageGrids('assets/image6.png'));
+    imageGridList.add(ImageGrids('/data/user/0/com.example.photo_gallery/cache/d2076091-50c5-4ab2-b818-c016a470c2dd/download (5).jpg'));
+    // imageGridList.add(ImageGrids('assets/image2.png'));
+    // imageGridList.add(ImageGrids('assets/image3.png'));
+    // imageGridList.add(ImageGrids('assets/image4.png'));
+    // imageGridList.add(ImageGrids('assets/image5.png'));
+    // imageGridList.add(ImageGrids('assets/image6.png'));
   }
 
   static ImageManager getInstance() {
