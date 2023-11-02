@@ -1,10 +1,11 @@
-class ImageGrids {
-  late int id;
-  late String imagePath;
-  static int globalIdNo = 0;
+class MyImage {
+  late int m_id;
+  late String m_imagePath;
+  static int s_globalId = 0;
+  bool isDeleted = false;
 
-  ImageGrids(this.imagePath) {
-    id = globalIdNo + 1;
-    globalIdNo++;
+  MyImage(this.m_imagePath) {
+    m_id = s_globalId + 1;
+    s_globalId++;
   }
 }

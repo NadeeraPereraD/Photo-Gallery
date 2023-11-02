@@ -26,11 +26,13 @@ class _HomePageState extends State<HomePage> {
     imagesList.clear();
     print('Loading Images');
 
-    if (m_manager!.imageGridList.isNotEmpty) {
-      for (int i = 0; i < m_manager!.imageGridList.length; i++) {
-        imagesList.add(ImagesObject(
-            imageId: m_manager!.imageGridList[i].id,
-            imagePath: m_manager!.imageGridList[i].imagePath));
+    if (m_manager!.m_imageList.isNotEmpty) {
+      for (int i = 0; i < m_manager!.m_imageList.length; i++) {
+        if (m_manager!.m_imageList[i].isDeleted == false) {
+          imagesList.add(ImagesObject(
+              imageId: m_manager!.m_imageList[i].m_id,
+              imagePath: m_manager!.m_imageList[i].m_imagePath));
+        }
       }
     }
   }
@@ -40,14 +42,14 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     () async {
       var _permissionStatus = await Permission.storage.status;
- 
+
       if (_permissionStatus != PermissionStatus.granted) {
-        PermissionStatus permissionStatus= await Permission.storage.request();
+        PermissionStatus permissionStatus = await Permission.storage.request();
         setState(() {
           _permissionStatus = permissionStatus;
         });
       }
-    } ();
+    }();
     loadImages();
   }
 
@@ -55,8 +57,7 @@ class _HomePageState extends State<HomePage> {
     final image = await ImagePicker().pickImage(source: ImageSource.gallery);
     if (image == null) return;
 
-    print(MyApp.Tag + image.path);
-    
+    print(MyApp.Tag + 'image name : ' + image.path);
 
     m_manager!.addImages(image.path);
     setState(() {
@@ -88,7 +89,7 @@ class _HomePageState extends State<HomePage> {
       body: GridView.builder(
           itemCount: imagesList.length,
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 3),
+              crossAxisCount: 4),
           itemBuilder: ((context, index) {
             return InkWell(
               onTap: () => Navigator.push(
@@ -97,20 +98,23 @@ class _HomePageState extends State<HomePage> {
                   builder: (_) => PhotoViewPage(imagesList[index].imagePath),
                 ),
               ),
+              onLongPress: () {
+                print(MyApp.Tag + 'On long press $index ');
+              },
               child: Hero(
                 tag: imagesList[index],
                 child: Card(
-                  child: Image.file(
-                      File(imagesList[index].imagePath),
-                      width: 100,
-                      height: 100,
-                      fit: BoxFit.fill,
-                  )
-                  // Image(
-                  //     image: AssetImage(
-                  //   imagesList[index].imagePath,
-                  // )),
-                ),
+                    child: Image.file(
+                  File(imagesList[index].imagePath),
+                  width: 100,
+                  height: 100,
+                  fit: BoxFit.fill,
+                )
+                    // Image(
+                    //     image: AssetImage(
+                    //   imagesList[index].imagePath,
+                    // )),
+                    ),
                 //),
               ),
             );
