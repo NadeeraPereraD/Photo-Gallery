@@ -6,6 +6,7 @@ import 'package:photo_gallery/app_logic/image_manager.dart';
 import 'package:photo_gallery/main.dart';
 import 'package:photo_gallery/screens/photo_view_page.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:photo_gallery/screens/select_image_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,6 +18,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   List<ImagesObject> imagesList = [];
   ImageManager? m_manager = null;
+  bool isLongPressed = false;
 
 /////// Images Load function
   void loadImages() {
@@ -72,7 +74,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text('Photo Gallery'),
         actions: [
           IconButton(onPressed: addImages, icon: const Icon(Icons.add)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.delete)),
+          const IconButton(onPressed: null, icon: Icon(Icons.delete)),
         ],
       ),
       // body: GridView.count(
@@ -92,36 +94,84 @@ class _HomePageState extends State<HomePage> {
               crossAxisCount: 4),
           itemBuilder: ((context, index) {
             return InkWell(
-              onTap: () => Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => PhotoViewPage(imagesList[index].imagePath),
-                ),
-              ),
-              onLongPress: () {
-                print(MyApp.Tag + 'On long press $index ');
-              },
-              child: Hero(
-                tag: imagesList[index],
-                child: Card(
-                    child: Image.file(
-                  File(imagesList[index].imagePath),
-                  width: 100,
-                  height: 100,
-                  fit: BoxFit.fill,
-                )
-                    // Image(
-                    //     image: AssetImage(
-                    //   imagesList[index].imagePath,
-                    // )),
+                onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) =>
+                            PhotoViewPage(imagesList[index].imagePath),
+                      ),
                     ),
-                //),
-              ),
-            );
+                onLongPress: () {
+                  isLongPressed = true;
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          SelectImagePage(s_imagesList: imagesList ),
+                    ),
+                  );
+                },
+                // child: isLongPressed
+                //     ? selectImageView(imagesList, index)
+                //     : normalImageView(imagesList, index),
+
+                child: Hero(
+                  tag: imagesList[index],
+                  child: Card(
+                    child: Image.file(
+                      File(imagesList[index].imagePath),
+                      width: 100,
+                      height: 100,
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ));
           })),
     );
   }
 }
+
+// Widget normalImageView(List<ImagesObject> imagesList, int index) {
+//   bool isChecked = false;
+  // return Hero(
+  //   tag: imagesList[index],
+  //   child: Stack(children: [
+  //     Card(
+  //       child: Image.file(
+  //         File(imagesList[index].imagePath),
+  //         width: 100,
+  //         height: 100,
+  //         fit: BoxFit.fill,
+  //       ),
+  //       // Image(
+  //       //     image: AssetImage(
+  //       //   imagesList[index].imagePath,
+  //       // )),
+  //     ),
+  //     Align(
+  //       alignment: Alignment.topRight,
+  //       child:
+  //         // IconButton(
+  //         //   icon: Icon(Icons.check_box_rounded),
+  //         //   onPressed: checked,
+  //         // ),
+  //         Checkbox(
+  //           value: isChecked,
+  //           onChanged: (bool? value) {
+  //             setState(() {
+  //               isChecked = value!;
+  //             });
+  //           },
+  //         ),
+  //     )
+  //   ]),
+  //   //),
+  // );
+//}
+
+// void checked() {
+//   print("Icon Button Working");
+// }
 
 class ImagesObject {
   late int imageId;
